@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Painel{% endblock %}
+
+{% block estilos %}
+<style>
+  .resumo .valor { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .resumo i { font-size: 1.6rem; opacity: .9; }
+  .sensor {
+    display: block; text-decoration: none; color: inherit; height: 100%;
+    border-left: 4px solid var(--sem-dados);
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .sensor:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,.35); }
+  .sensor.normal { border-left-color: var(--normal); }
+  .sensor.alerta { border-left-color: var(--alerta);
+                   box-shadow: 0 0 0 1px rgba(239,68,68,.25); }
+  .sensor .icone {
+    width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+    background: rgba(56,189,248,.12); color: var(--destaque); font-size: 1.2rem;
+  }
+  .sensor.alerta .icone { background: rgba(239,68,68,.15); color: var(--alerta); }
+  .sensor .leitura { font-size: 1.9rem; font-weight: 700; letter-spacing: -.5px; }
+  .sensor .unidade { font-size: 1rem; color: var(--texto-suave); font-weight: 500; }
+</style>
+{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+  <div>
+    <h1 class="h3 fw-bold mb-1">Painel de sensores</h1>
+    <p class="texto-suave mb-0">Última leitura de cada sensor ativo</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4 resumo">
+  <div class="col-6 col-lg-3"><div class="cartao p-3 d-flex justify-content-between">
+    <div><div class="rotulo-pequeno">Sensores</div><div class="valor">{{ total_sensores }}</div></div>
+    <i class="bi bi-cpu" style="color: var(--destaque)"></i></div></div>
+  <div class="col-6 col-lg-3"><div class="cartao p-3 d-flex justify-content-between">
+    <div><div class="rotulo-pequeno">Normal</div><div class="valor">{{ normais }}</div></div>
+    <i class="bi bi-check-circle" style="color: var(--normal)"></i></div></div>
+  <div class="col-6 col-lg-3"><div class="cartao p-3 d-flex justify-content-between">
+    <div><div class="rotulo-pequeno">Em alerta</div><div class="valor">{{ em_alerta }}</div></div>
+    <i class="bi bi-exclamation-triangle" style="color: var(--alerta)"></i></div></div>
+  <div class="col-6 col-lg-3"><div class="cartao p-3 d-flex justify-content-between">
+    <div><div class="rotulo-pequeno">Sem leituras</div><div class="valor">{{ sem_leituras }}</div></div>
+    <i class="bi bi-dash-circle texto-suave"></i></div></div>
+</div>
+
+{% for instalacao, sensores in instalacoes %}
+  <section class="mb-4">
+    <h2 class="h6 fw-semibold mb-3">
+      <i class="bi bi-building me-1 texto-suave"></i>{{ instalacao.nome }}
+      <span class="texto-suave fw-normal">· {{ instalacao.localizacao }}</span>
+    </h2>
+    <div class="row g-3">
+      {% for sensor in sensores %}
+        <div class="col-sm-6 col-lg-4 col-xxl">
+          <a href="{% url 'historico' sensor.pk %}"
+             class="cartao sensor p-3 {% if sensor.estado == 'alerta' %}alerta{% elif sensor.estado == 'normal' %}normal{% endif %}">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="icone">
+                {% if sensor.tipo == 'temperatura' %}<i class="bi bi-thermometer-half"></i>
+                {% elif sensor.tipo == 'humidade' %}<i class="bi bi-droplet-half"></i>
+                {% elif sensor.tipo == 'co2' %}<i class="bi bi-cloud-haze2"></i>
+                {% else %}<i class="bi bi-lightning-charge"></i>{% endif %}
+              </div>
+              {% if sensor.estado == 'alerta' %}
+                <span class="estado estado-alerta"><i class="bi bi-exclamation-triangle-fill me-1"></i>Em alerta</span>
+              {% elif sensor.estado == 'normal' %}
+                <span class="estado estado-normal">Normal</span>
+              {% else %}
+                <span class="estado estado-sem">Sem leituras</span>
+              {% endif %}
+            </div>
+            <div class="small texto-suave mb-1">{{ sensor.nome }}</div>
+            <div class="leitura">
+              {% if sensor.ultimo_valor is not None %}
+                {{ sensor.ultimo_valor|floatformat:1 }} <span class="unidade">{{ sensor.unidade }}</span>
+              {% else %}—{% endif %}
+            </div>
+            <div class="d-flex justify-content-between small texto-suave mt-2">
+              <span>{{ sensor.limite_min|floatformat:0 }}–{{ sensor.limite_max|floatformat:0 }} {{ sensor.unidade }}</span>
+              <span>{% if sensor.ultimo_instante %}{{ sensor.ultimo_instante|date:"d/m H:i" }}{% endif %}</span>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% empty %}
+  <div class="alert alert-info">Ainda não há sensores ativos. Adicione-os na administração.</div>
+{% endfor %}
+{% endblock %}

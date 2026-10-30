@@ -1,0 +1,267 @@
+{
+  "data": "2026-10-28T22:34:33",
+  "ambiente": {
+    "so": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "nucleos_logicos": 24,
+    "python": "3.13.15",
+    "django": "6.1.2",
+    "servidor": "Waitress, 8 threads, DEBUG=False",
+    "pedidos_por_medicao": 200
+  },
+  "volume": {
+    "10000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 7.05,
+        "mediana_ms": 6.9,
+        "p95_ms": 7.84,
+        "p99_ms": 9.56,
+        "debito_pedidos_s": 141.7,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 13.09,
+        "mediana_ms": 12.27,
+        "p95_ms": 13.5,
+        "p99_ms": 14.9,
+        "debito_pedidos_s": 76.4,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 5.42,
+        "mediana_ms": 5.35,
+        "p95_ms": 6.03,
+        "p99_ms": 6.41,
+        "debito_pedidos_s": 184.4,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 15.94,
+        "mediana_ms": 10.55,
+        "p95_ms": 14.38,
+        "p99_ms": 21.54,
+        "debito_pedidos_s": 62.7,
+        "erros_pct": 0.0
+      }
+    },
+    "100000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 6.88,
+        "mediana_ms": 6.82,
+        "p95_ms": 7.54,
+        "p99_ms": 8.0,
+        "debito_pedidos_s": 145.2,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 20.56,
+        "mediana_ms": 20.36,
+        "p95_ms": 21.87,
+        "p99_ms": 22.91,
+        "debito_pedidos_s": 48.6,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 9.37,
+        "mediana_ms": 9.05,
+        "p95_ms": 9.8,
+        "p99_ms": 11.97,
+        "debito_pedidos_s": 106.6,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 18.48,
+        "mediana_ms": 10.43,
+        "p95_ms": 12.42,
+        "p99_ms": 196.53,
+        "debito_pedidos_s": 54.1,
+        "erros_pct": 0.0
+      }
+    },
+    "1000000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 7.02,
+        "mediana_ms": 6.95,
+        "p95_ms": 7.73,
+        "p99_ms": 8.59,
+        "debito_pedidos_s": 142.3,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 21.03,
+        "mediana_ms": 20.42,
+        "p95_ms": 22.71,
+        "p99_ms": 24.89,
+        "debito_pedidos_s": 47.5,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 9.42,
+        "mediana_ms": 9.2,
+        "p95_ms": 10.05,
+        "p99_ms": 17.28,
+        "debito_pedidos_s": 106.1,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 10.51,
+        "mediana_ms": 10.33,
+        "p95_ms": 11.9,
+        "p99_ms": 15.63,
+        "debito_pedidos_s": 95.1,
+        "erros_pct": 0.0
+      }
+    }
+  },
+  "indice": {
+    "sem_indice": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 1721.44,
+        "mediana_ms": 1716.68,
+        "p95_ms": 1758.12,
+        "p99_ms": 1781.27,
+        "debito_pedidos_s": 0.6,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 137.27,
+        "mediana_ms": 136.46,
+        "p95_ms": 142.26,
+        "p99_ms": 148.05,
+        "debito_pedidos_s": 7.3,
+        "erros_pct": 0.0
+      }
+    },
+    "com_indice": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 6.51,
+        "mediana_ms": 6.45,
+        "p95_ms": 7.28,
+        "p99_ms": 8.0,
+        "debito_pedidos_s": 153.3,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 19.68,
+        "mediana_ms": 19.47,
+        "p95_ms": 21.01,
+        "p99_ms": 21.95,
+        "debito_pedidos_s": 50.8,
+        "erros_pct": 0.0
+      }
+    }
+  },
+  "carga": {
+    "caso_mais_lento": "UC3",
+    "UC3": {
+      "1": {
+        "pedidos": 25,
+        "media_ms": 19.69,
+        "mediana_ms": 19.55,
+        "p95_ms": 20.61,
+        "p99_ms": 20.66,
+        "debito_pedidos_s": 50.7,
+        "erros_pct": 0.0
+      },
+      "5": {
+        "pedidos": 125,
+        "media_ms": 95.1,
+        "mediana_ms": 96.39,
+        "p95_ms": 112.91,
+        "p99_ms": 117.1,
+        "debito_pedidos_s": 51.9,
+        "erros_pct": 0.0
+      },
+      "10": {
+        "pedidos": 250,
+        "media_ms": 202.47,
+        "mediana_ms": 206.56,
+        "p95_ms": 252.01,
+        "p99_ms": 274.89,
+        "debito_pedidos_s": 48.2,
+        "erros_pct": 0.0
+      },
+      "20": {
+        "pedidos": 500,
+        "media_ms": 417.46,
+        "mediana_ms": 422.57,
+        "p95_ms": 487.23,
+        "p99_ms": 512.85,
+        "debito_pedidos_s": 47.1,
+        "erros_pct": 0.0
+      },
+      "40": {
+        "pedidos": 1000,
+        "media_ms": 1020.3,
+        "mediana_ms": 1036.41,
+        "p95_ms": 1082.75,
+        "p99_ms": 1102.6,
+        "debito_pedidos_s": 38.5,
+        "erros_pct": 0.0
+      }
+    },
+    "UC6": {
+      "1": {
+        "pedidos": 25,
+        "media_ms": 10.75,
+        "mediana_ms": 10.53,
+        "p95_ms": 12.02,
+        "p99_ms": 13.95,
+        "debito_pedidos_s": 92.8,
+        "erros_pct": 0.0
+      },
+      "5": {
+        "pedidos": 125,
+        "media_ms": 43.17,
+        "mediana_ms": 30.57,
+        "p95_ms": 102.99,
+        "p99_ms": 137.42,
+        "debito_pedidos_s": 106.3,
+        "erros_pct": 0.0
+      },
+      "10": {
+        "pedidos": 250,
+        "media_ms": 80.51,
+        "mediana_ms": 53.75,
+        "p95_ms": 241.72,
+        "p99_ms": 616.5,
+        "debito_pedidos_s": 107.4,
+        "erros_pct": 0.0
+      },
+      "20": {
+        "pedidos": 500,
+        "media_ms": 175.15,
+        "mediana_ms": 122.72,
+        "p95_ms": 398.4,
+        "p99_ms": 1021.83,
+        "debito_pedidos_s": 105.7,
+        "erros_pct": 0.0
+      },
+      "40": {
+        "pedidos": 1000,
+        "media_ms": 347.33,
+        "mediana_ms": 290.36,
+        "p95_ms": 841.33,
+        "p99_ms": 1320.86,
+        "debito_pedidos_s": 101.6,
+        "erros_pct": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Iniciar sessão{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center pt-5">
+  <div class="col-md-6 col-lg-4">
+    <div class="cartao p-4 shadow-lg">
+      <div class="text-center mb-4">
+        <div class="display-6 mb-2" style="color: var(--destaque)">
+          <i class="bi bi-broadcast-pin"></i>
+        </div>
+        <h1 class="h4 mb-1">Monitorização IoT</h1>
+        <p class="texto-suave small mb-0">Inicie sessão para aceder ao painel</p>
+      </div>
+      {% if form.errors %}
+        <div class="alert alert-danger py-2 small">
+          Nome de utilizador ou palavra-passe incorretos.</div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="rotulo-pequeno mb-1" for="id_username">Utilizador</label>
+          <input class="form-control form-control-lg" type="text" name="username"
+                 id="id_username" autofocus required>
+        </div>
+        <div class="mb-4">
+          <label class="rotulo-pequeno mb-1" for="id_password">Palavra-passe</label>
+          <input class="form-control form-control-lg" type="password" name="password"
+                 id="id_password" required>
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-info w-100 fw-semibold">Entrar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

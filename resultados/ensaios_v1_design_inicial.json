@@ -1,0 +1,218 @@
+{
+  "data": "2026-10-28T22:16:09",
+  "ambiente": {
+    "so": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "nucleos_logicos": 24,
+    "python": "3.13.15",
+    "django": "6.1.2",
+    "servidor": "Waitress, 8 threads, DEBUG=False",
+    "pedidos_por_medicao": 200
+  },
+  "volume": {
+    "10000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 7.56,
+        "mediana_ms": 7.01,
+        "p95_ms": 7.85,
+        "p99_ms": 8.43,
+        "debito_pedidos_s": 132.2,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 12.46,
+        "mediana_ms": 12.37,
+        "p95_ms": 13.43,
+        "p99_ms": 15.18,
+        "debito_pedidos_s": 80.2,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 14.79,
+        "mediana_ms": 13.96,
+        "p95_ms": 14.77,
+        "p99_ms": 63.08,
+        "debito_pedidos_s": 67.6,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 11.09,
+        "mediana_ms": 10.73,
+        "p95_ms": 13.2,
+        "p99_ms": 18.27,
+        "debito_pedidos_s": 90.1,
+        "erros_pct": 0.0
+      }
+    },
+    "100000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 7.37,
+        "mediana_ms": 7.35,
+        "p95_ms": 8.0,
+        "p99_ms": 8.42,
+        "debito_pedidos_s": 135.6,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 20.3,
+        "mediana_ms": 20.06,
+        "p95_ms": 21.84,
+        "p99_ms": 23.42,
+        "debito_pedidos_s": 49.2,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 34.9,
+        "mediana_ms": 34.86,
+        "p95_ms": 36.74,
+        "p99_ms": 38.03,
+        "debito_pedidos_s": 28.6,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 10.94,
+        "mediana_ms": 10.68,
+        "p95_ms": 12.4,
+        "p99_ms": 15.16,
+        "debito_pedidos_s": 91.4,
+        "erros_pct": 0.0
+      }
+    },
+    "1000000": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 7.32,
+        "mediana_ms": 7.25,
+        "p95_ms": 7.97,
+        "p99_ms": 8.54,
+        "debito_pedidos_s": 136.5,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 21.06,
+        "mediana_ms": 20.65,
+        "p95_ms": 22.13,
+        "p99_ms": 28.32,
+        "debito_pedidos_s": 47.5,
+        "erros_pct": 0.0
+      },
+      "UC4": {
+        "pedidos": 200,
+        "media_ms": 34.85,
+        "mediana_ms": 34.89,
+        "p95_ms": 36.55,
+        "p99_ms": 37.57,
+        "debito_pedidos_s": 28.7,
+        "erros_pct": 0.0
+      },
+      "UC6": {
+        "pedidos": 200,
+        "media_ms": 11.28,
+        "mediana_ms": 10.72,
+        "p95_ms": 12.63,
+        "p99_ms": 17.88,
+        "debito_pedidos_s": 88.6,
+        "erros_pct": 0.0
+      }
+    }
+  },
+  "indice": {
+    "sem_indice": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 1556.15,
+        "mediana_ms": 1551.05,
+        "p95_ms": 1606.35,
+        "p99_ms": 1632.35,
+        "debito_pedidos_s": 0.6,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 124.46,
+        "mediana_ms": 123.51,
+        "p95_ms": 132.55,
+        "p99_ms": 134.48,
+        "debito_pedidos_s": 8.0,
+        "erros_pct": 0.0
+      }
+    },
+    "com_indice": {
+      "UC2": {
+        "pedidos": 200,
+        "media_ms": 6.62,
+        "mediana_ms": 6.57,
+        "p95_ms": 7.21,
+        "p99_ms": 7.92,
+        "debito_pedidos_s": 150.9,
+        "erros_pct": 0.0
+      },
+      "UC3": {
+        "pedidos": 200,
+        "media_ms": 19.94,
+        "mediana_ms": 19.65,
+        "p95_ms": 21.55,
+        "p99_ms": 23.54,
+        "debito_pedidos_s": 50.1,
+        "erros_pct": 0.0
+      }
+    }
+  },
+  "carga": {
+    "caso_de_uso": "UC4",
+    "1": {
+      "pedidos": 25,
+      "media_ms": 33.51,
+      "mediana_ms": 33.19,
+      "p95_ms": 35.13,
+      "p99_ms": 35.57,
+      "debito_pedidos_s": 29.8,
+      "erros_pct": 0.0
+    },
+    "5": {
+      "pedidos": 125,
+      "media_ms": 260.47,
+      "mediana_ms": 252.66,
+      "p95_ms": 424.82,
+      "p99_ms": 455.02,
+      "debito_pedidos_s": 18.9,
+      "erros_pct": 0.0
+    },
+    "10": {
+      "pedidos": 250,
+      "media_ms": 1004.47,
+      "mediana_ms": 1048.8,
+      "p95_ms": 1656.6,
+      "p99_ms": 1816.79,
+      "debito_pedidos_s": 9.7,
+      "erros_pct": 0.0
+    },
+    "20": {
+      "pedidos": 500,
+      "media_ms": 2573.46,
+      "mediana_ms": 2584.04,
+      "p95_ms": 3494.71,
+      "p99_ms": 3728.91,
+      "debito_pedidos_s": 7.7,
+      "erros_pct": 0.0
+    },
+    "40": {
+      "pedidos": 1000,
+      "media_ms": 5311.9,
+      "mediana_ms": 5460.82,
+      "p95_ms": 6486.35,
+      "p99_ms": 6687.53,
+      "debito_pedidos_s": 7.5,
+      "erros_pct": 0.0
+    }
+  }
+}

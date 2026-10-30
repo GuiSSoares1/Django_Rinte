@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ sensor.nome }}{% endblock %}
+
+{% block estilos %}
+<style>
+  .indicador .valor { font-size: 1.6rem; font-weight: 700; }
+  .indicador i { font-size: 1.3rem; }
+  .tabela-leituras { --bs-table-bg: transparent; }
+  .tabela-leituras td, .tabela-leituras th { border-color: var(--linha); }
+  .linha-alerta td { color: var(--alerta) !important; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'painel' %}" class="small text-decoration-none">
+  <i class="bi bi-arrow-left me-1"></i>Voltar ao painel</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mt-2 mb-4">
+  <div>
+    <h1 class="h3 fw-bold mb-1">{{ sensor.nome }}</h1>
+    <p class="texto-suave mb-0">
+      <i class="bi bi-building me-1"></i>{{ sensor.instalacao.nome }} ·
+      {{ sensor.get_tipo_display }} · limites de {{ sensor.limite_min|floatformat:0 }}
+      a {{ sensor.limite_max|floatformat:0 }} {{ sensor.unidade }}
+    </p>
+  </div>
+  <a class="btn btn-outline-info"
+     href="{% url 'exportar_csv' sensor.pk %}?{{ query }}">
+    <i class="bi bi-download me-1"></i>Exportar CSV</a>
+</div>
+
+<form method="get" class="cartao p-3 mb-4 row g-2 align-items-end mx-0">
+  <div class="col-sm-auto">
+    <label class="rotulo-pequeno mb-1" for="inicio">Início</label>
+    <input class="form-control" type="datetime-local" id="inicio" name="inicio"
+           value="{{ inicio|date:'Y-m-d\TH:i' }}">
+  </div>
+  <div class="col-sm-auto">
+    <label class="rotulo-pequeno mb-1" for="fim">Fim</label>
+    <input class="form-control" type="datetime-local" id="fim" name="fim"
+           value="{{ fim|date:'Y-m-d\TH:i' }}">
+  </div>
+  <div class="col-sm-auto">
+    <button class="btn btn-info fw-semibold" type="submit">
+      <i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+  </div>
+</form>
+
+{% if resumo.total %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="cartao indicador p-3 d-flex justify-content-between">
+      <div><div class="rotulo-pequeno">Mínimo</div>
+        <div class="valor">{{ resumo.minimo|floatformat:1 }} <small class="texto-suave fs-6">{{ sensor.unidade }}</small></div></div>
+      <i class="bi bi-arrow-down-circle" style="color: var(--destaque)"></i></div></div>
+    <div class="col-6 col-lg-3"><div class="cartao indicador p-3 d-flex justify-content-between">
+      <div><div class="rotulo-pequeno">Máximo</div>
+        <div class="valor">{{ resumo.maximo|floatformat:1 }} <small class="texto-suave fs-6">{{ sensor.unidade }}</small></div></div>
+      <i class="bi bi-arrow-up-circle" style="color: var(--alerta)"></i></div></div>
+    <div class="col-6 col-lg-3"><div class="cartao indicador p-3 d-flex justify-content-between">
+      <div><div class="rotulo-pequeno">Média</div>
+        <div class="valor">{{ resumo.media|floatformat:1 }} <small class="texto-suave fs-6">{{ sensor.unidade }}</small></div></div>
+      <i class="bi bi-graph-up" style="color: var(--normal)"></i></div></div>
+    <div class="col-6 col-lg-3"><div class="cartao indicador p-3 d-flex justify-content-between">
+      <div><div class="rotulo-pequeno">Leituras</div>
+        <div class="valor">{{ resumo.total }}</div></div>
+      <i class="bi bi-list-ol texto-suave"></i></div></div>
+  </div>
+
+  <div class="cartao p-3 mb-4">
+    <div class="d-flex justify-content-between mb-2">
+      <span class="fw-semibold">Evolução no período</span>
+      <span class="small texto-suave">
+        <i class="bi bi-square-fill me-1" style="color: rgba(34,197,94,.35)"></i>intervalo normal
+      </span>
+    </div>
+    <div style="height: 340px"><canvas id="grafico"></canvas></div>
+  </div>
+
+  <div class="cartao">
+    <div class="p-3 border-bottom" style="border-color: var(--linha) !important">
+      <span class="fw-semibold">Leituras mais recentes</span>
+      <span class="small texto-suave">(máx. {{ max_linhas }})</span>
+    </div>
+    <div class="table-responsive" style="max-height: 360px">
+      <table class="table table-sm tabela-leituras mb-0">
+        <thead><tr><th class="ps-3 rotulo-pequeno">Hora</th>
+                   <th class="text-end pe-3 rotulo-pequeno">Valor</th></tr></thead>
+        <tbody>
+          {% for leitura in leituras %}
+            <tr class="{% if leitura.valor < sensor.limite_min or leitura.valor > sensor.limite_max %}linha-alerta{% endif %}">
+              <td class="ps-3">{{ leitura.instante|date:"d/m/Y H:i:s" }}</td>
+              <td class="text-end pe-3">{{ leitura.valor|floatformat:1 }} {{ sensor.unidade }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info">Não existem leituras para o período escolhido.</div>
+{% endif %}
+
+{{ grafico|json_script:"dados-grafico" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const dados = JSON.parse(document.getElementById('dados-grafico').textContent);
+  const canvas = document.getElementById('grafico');
+  if (canvas && dados.valores.length) {
+    const linha = (valor) => dados.valores.map(() => valor);
+    const contexto = canvas.getContext('2d');
+    const gradiente = contexto.createLinearGradient(0, 0, 0, 340);
+    gradiente.addColorStop(0, 'rgba(56,189,248,.35)');
+    gradiente.addColorStop(1, 'rgba(56,189,248,0)');
+    Chart.defaults.color = '#8b9bbd';
+    Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: dados.etiquetas,
+        datasets: [
+          {label: 'Valor', data: dados.valores, borderColor: '#38bdf8',
+           backgroundColor: gradiente, fill: 'origin', pointRadius: 0,
+           borderWidth: 2, tension: 0.25, order: 0},
+          {label: 'Limite máximo', data: linha(dados.limite_max), borderColor: '#ef4444',
+           backgroundColor: 'rgba(34,197,94,.08)', fill: '+1', borderDash: [6, 4],
+           pointRadius: 0, borderWidth: 1, order: 1},
+          {label: 'Limite mínimo', data: linha(dados.limite_min), borderColor: '#ef4444',
+           borderDash: [6, 4], pointRadius: 0, borderWidth: 1, order: 1},
+        ],
+      },
+      options: {
+        animation: false, maintainAspectRatio: false,
+        interaction: {mode: 'index', intersect: false},
+        plugins: {legend: {labels: {boxWidth: 12, usePointStyle: true}}},
+        scales: {
+          x: {ticks: {maxTicksLimit: 10}, grid: {color: 'rgba(36,49,79,.5)'}},
+          y: {grid: {color: 'rgba(36,49,79,.5)'}},
+        },
+      },
+    });
+  }
+</script>
+{% endblock %}

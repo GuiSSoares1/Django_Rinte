@@ -1,0 +1,6 @@
+# Copiar para ~/public_html/rinte/.htaccess no servidor ave.
+# O Apache passa todos os pedidos de /~1220847/rinte/ ao Waitress local.
+# Sem DirectoryIndex, o Apache trocaria /rinte/ por /rinte/index.html (404).
+DirectoryIndex disabled
+RewriteEngine On
+RewriteRule ^(.*)$ http://127.0.0.1:8847/$1 [P,L]
