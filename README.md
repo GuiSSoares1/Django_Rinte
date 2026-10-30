@@ -35,7 +35,7 @@ Abrir http://127.0.0.1:8000/.
 | `operador` | `rinte-operador-2026` | Operador |
 | `dispositivo` | (nenhuma, não entra no site) | Dono do *token* da API (em `simulador_config.json`) |
 
-## Servidor ave.dee.isep.ipp.pt (Linux)
+## Servidor Linux com Apache
 
 ```
 python3 -m venv ~/venvs/rinte-app && source ~/venvs/rinte-app/bin/activate
@@ -48,9 +48,8 @@ mkdir -p ~/public_html/rinte && cp ave_htaccess ~/public_html/rinte/.htaccess
 ./servidor_ave.sh                       # ./servidor_ave.sh parar para desligar
 ```
 
-Endereço: http://ave.dee.isep.ipp.pt/~1220847/rinte/ (o Apache passa os
-pedidos ao Waitress, que só escuta em 127.0.0.1:8847). O HTTPS do ave tem o
-certificado de outro domínio (neeti.dee.isep.ipp.pt), por isso usa-se HTTP.
+O Apache publica a plataforma na pasta `public_html/rinte/` do utilizador e
+passa os pedidos ao Waitress, que só escuta em 127.0.0.1:8847.
 
 Num servidor acessível a terceiros convém trocar as palavras-passe de
 demonstração acima. Correr de novo `preparar_demo` repõe-nas.
