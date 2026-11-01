@@ -1,3 +1,6 @@
+{# Painel de sensores (UC2). Contexto enviado pela view painel (views.py): #}
+{# instalacoes = [(instalação, [sensores])], total_sensores, normais, em_alerta e #}
+{# sem_leituras. Cada sensor traz ultimo_valor, ultimo_instante e estado. #}
 {% extends 'base.html' %}
 
 {% block titulo %}Painel{% endblock %}
@@ -33,6 +36,7 @@
   </div>
 </div>
 
+{# Quatro cartões de resumo (contagens calculadas na view) #}
 <div class="row g-3 mb-4 resumo">
   <div class="col-6 col-lg-3"><div class="cartao p-3 d-flex justify-content-between">
     <div><div class="rotulo-pequeno">Sensores</div><div class="valor">{{ total_sensores }}</div></div>
@@ -48,6 +52,7 @@
     <i class="bi bi-dash-circle texto-suave"></i></div></div>
 </div>
 
+{# Uma secção por instalação e, dentro dela, um cartão por sensor #}
 {% for instalacao, sensores in instalacoes %}
   <section class="mb-4">
     <h2 class="h6 fw-semibold mb-3">
@@ -57,6 +62,7 @@
     <div class="row g-3">
       {% for sensor in sensores %}
         <div class="col-sm-6 col-lg-4 col-xxl">
+          {# O cartão inteiro é um link para o histórico; a classe CSS (alerta/normal) dá a cor da barra lateral #}
           <a href="{% url 'historico' sensor.pk %}"
              class="cartao sensor p-3 {% if sensor.estado == 'alerta' %}alerta{% elif sensor.estado == 'normal' %}normal{% endif %}">
             <div class="d-flex justify-content-between align-items-start mb-3">
@@ -75,6 +81,7 @@
               {% endif %}
             </div>
             <div class="small texto-suave mb-1">{{ sensor.nome }}</div>
+            {# floatformat:1 arredonda a uma casa decimal; sem leituras mostra um traço #}
             <div class="leitura">
               {% if sensor.ultimo_valor is not None %}
                 {{ sensor.ultimo_valor|floatformat:1 }} <span class="unidade">{{ sensor.unidade }}</span>
@@ -89,6 +96,7 @@
       {% endfor %}
     </div>
   </section>
+{# empty: mostrado quando a lista do for está vazia #}
 {% empty %}
   <div class="alert alert-info">Ainda não há sensores ativos. Adicione-os na administração.</div>
 {% endfor %}

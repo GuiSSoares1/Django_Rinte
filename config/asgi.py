@@ -1,10 +1,10 @@
 """
-ASGI config for config project.
+Ponto de entrada ASGI (Asynchronous Server Gateway Interface).
 
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.1/howto/deployment/asgi/
+É a alternativa assíncrona ao WSGI, necessária para WebSockets (por exemplo,
+com o Django Channels). Este projeto não a usa: corre com o Waitress, que é
+WSGI. O ficheiro é criado pelo startproject e fica para uma evolução futura
+(painel atualizado em tempo real).
 """
 
 import os

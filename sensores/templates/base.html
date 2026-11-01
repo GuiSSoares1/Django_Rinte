@@ -1,9 +1,26 @@
+{% comment %}
+  Template base (o T do padrão MTV): estrutura comum a todas as páginas.
+
+  As outras páginas começam por {% extends 'base.html' %} e só preenchem os
+  blocos ({% block nome %}...{% endblock %}) que lhes interessam: titulo,
+  estilos, conteudo e scripts. Tudo o resto (cabeçalho, barra de navegação,
+  mensagens) é escrito uma só vez aqui (princípio DRY).
+
+  Sintaxe dos templates do Django:
+    {{ variavel }}        escreve um valor do contexto (com escape de HTML)
+    {% etiqueta %}        lógica: if, for, url, block, csrf_token...
+    {{ valor|filtro }}    transforma o valor (ex.: floatformat:1, date:"d/m")
+  Estes comentários ({% comment %} e {# #}) não são enviados ao browser.
+{% endcomment %}
 <!doctype html>
+{# data-bs-theme="dark": tema escuro do Bootstrap #}
 <html lang="pt-PT" data-bs-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Cada página pode substituir o título; por omissão fica "Monitorização IoT" #}
   <title>{% block titulo %}Monitorização IoT{% endblock %}</title>
+  {# Fonte, Bootstrap (estilos e grelha) e ícones vêm de CDNs: exigem internet #}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
@@ -11,6 +28,7 @@
         rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet">
+  {# Estilos próprios: cores (variáveis CSS), cartões e etiquetas de estado #}
   <style>
     :root {
       --fundo: #0b1120;
@@ -56,23 +74,31 @@
     .form-control, .btn-outline-light { border-color: var(--linha); }
     .form-control { background-color: var(--painel); }
   </style>
+  {# Estilos extra de cada página (painel e histórico) #}
   {% block estilos %}{% endblock %}
 </head>
 <body>
+  {# Barra de navegação, igual em todas as páginas #}
   <nav class="topo sticky-top mb-4">
     <div class="container d-flex align-items-center justify-content-between py-3">
       <a class="marca text-decoration-none text-light fs-5 text-nowrap" href="{% url 'painel' %}">
         <i class="bi bi-broadcast-pin me-1"></i> Monitorização IoT
       </a>
+      {# user vem do context processor auth (settings.py): o utilizador da sessão #}
       {% if user.is_authenticated %}
         <div class="d-flex align-items-center gap-3">
+          {# Ligações só para administradores (is_staff) #}
           {% if user.is_staff %}
+            <a class="text-decoration-none texto-suave text-nowrap" href="{% url 'api_docs' %}"
+               title="Documentação da API"><i class="bi bi-braces"></i>
+              <span class="d-none d-md-inline ms-1">API</span></a>
             <a class="text-decoration-none texto-suave text-nowrap" href="{% url 'admin:index' %}"
                title="Administração"><i class="bi bi-gear"></i>
               <span class="d-none d-md-inline ms-1">Administração</span></a>
           {% endif %}
           <span class="texto-suave small text-nowrap d-none d-sm-inline">
             <i class="bi bi-person-circle me-1"></i>{{ user.username }}</span>
+          {# O logout é um POST (não um link), e todos os POST levam o token CSRF #}
           <form method="post" action="{% url 'logout' %}" class="m-0">
             {% csrf_token %}
             <button type="submit" class="btn btn-outline-light btn-sm text-nowrap"
@@ -85,12 +111,15 @@
   </nav>
 
   <main class="container mb-5">
+    {# Avisos criados nas views com messages.error (ex.: data inválida no histórico) #}
     {% for mensagem in messages %}
       <div class="alert alert-warning">{{ mensagem }}</div>
     {% endfor %}
+    {# Conteúdo específico de cada página #}
     {% block conteudo %}{% endblock %}
   </main>
 
+  {# JavaScript de cada página (o histórico usa-o para o gráfico) #}
   {% block scripts %}{% endblock %}
 </body>
 </html>

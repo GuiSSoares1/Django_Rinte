@@ -9,6 +9,11 @@ Uso (com o ambiente virtual ativo, na pasta do projeto):
     python manage.py preparar_demo
     python ensaios.py
 Os resultados ficam em resultados/ensaios_<data>.json.
+
+Corre uma vez, do início ao fim (cerca de 12 minutos), e termina sozinho.
+Funciona como um cliente externo: arranca o servidor Waitress noutro processo
+e mede, com requests, o tempo de cada pedido HTTP (ver Figura 4.1 do relatório).
+No fim a base de dados fica com 10^6 leituras.
 """
 import argparse
 import json
@@ -28,7 +33,7 @@ import django
 import requests
 
 RAIZ = Path(__file__).resolve().parent
-PORTA = 8001
+PORTA = 8001   # diferente da 8000, para não colidir com o runserver
 URL = f'http://127.0.0.1:{PORTA}'
 UTILIZADOR, PALAVRA_PASSE = 'operador', 'rinte-operador-2026'
 THREADS_SERVIDOR = 8
@@ -36,7 +41,11 @@ INDICE = 'leitura_sensor_instante'
 
 
 def manage(*args):
-    subprocess.run([sys.executable, 'manage.py', *args], cwd=RAIZ, check=True)
+    # A barra de progresso (\r) do gerar_leituras apagava linhas no terminal:
+    # mostra-se só a última linha da saída.
+    saida = subprocess.run([sys.executable, 'manage.py', *args], cwd=RAIZ, check=True,
+                           capture_output=True, text=True, encoding='utf-8', errors='replace').stdout
+    print(saida.strip().splitlines()[-1], flush=True)
 
 
 class Servidor:
@@ -63,6 +72,7 @@ class Servidor:
 
 
 def sessao_web():
+    """Inicia sessão como operador, como um browser: obtém o cookie CSRF e faz o POST do login."""
     sessao = requests.Session()
     sessao.get(f'{URL}/login/')
     resposta = sessao.post(f'{URL}/login/', data={
@@ -80,6 +90,7 @@ def sessao_api(token):
 
 
 def lote_leituras(config, tamanho=10):
+    """Corpo do POST de UC6: 10 leituras repartidas pelos sensores da 1.ª instalação."""
     sensores = config['dispositivos'][0]['sensores']
     agora = datetime.now(timezone.utc).isoformat()
     return [{'sensor': sensores[i % len(sensores)]['id'], 'valor': 21.0 + i,
@@ -87,6 +98,7 @@ def lote_leituras(config, tamanho=10):
 
 
 def casos_de_uso(config):
+    """Caso de uso -> (tipo de sessão, método, URL) a medir."""
     sensor = config['dispositivos'][0]['sensores'][0]['id']
     return {
         'UC2': ('web', 'GET', '/'),
@@ -97,7 +109,8 @@ def casos_de_uso(config):
 
 
 def pedido(sessao, metodo, caminho, config):
-    inicio = time.perf_counter()
+    """Um pedido HTTP: devolve a latência em ms (do envio à resposta completa) e se correu bem."""
+    inicio = time.perf_counter()   # relógio de alta resolução
     if metodo == 'GET':
         resposta = sessao.get(URL + caminho, timeout=60)
     else:
@@ -107,6 +120,7 @@ def pedido(sessao, metodo, caminho, config):
 
 
 def percentil(valores, p):
+    """Percentil pelo método do valor mais próximo: com 200 tempos, o p95 é o 190.º."""
     ordenados = sorted(valores)
     return ordenados[max(0, math.ceil(p / 100 * len(ordenados)) - 1)]
 
@@ -121,6 +135,7 @@ def resumo(tempos, erros, duracao_total):
         'p99_ms': round(percentil(tempos, 99), 2),
         'debito_pedidos_s': round(total / duracao_total, 1),
         'erros_pct': round(100 * erros / total, 2),
+        'tempos_ms': [round(t, 2) for t in tempos],  # cada pedido, por ordem
     }
 
 
@@ -129,6 +144,7 @@ def nova_sessao(tipo, config):
 
 
 def medir_sequencial(caso, config, n, aquecimento=20):
+    """Ensaio 1 e índice: 20 pedidos de aquecimento (não contam) e depois n pedidos seguidos."""
     tipo, metodo, caminho = caso
     sessao = nova_sessao(tipo, config)
     for _ in range(aquecimento):
@@ -143,6 +159,7 @@ def medir_sequencial(caso, config, n, aquecimento=20):
 
 
 def medir_concorrente(caso, config, utilizadores, pedidos_por_utilizador):
+    """Ensaio 2: cada utilizador é uma thread com sessão própria; todas pedem ao mesmo tempo."""
     tipo, metodo, caminho = caso
     sessoes = [nova_sessao(tipo, config) for _ in range(utilizadores)]
     for sessao in sessoes:
@@ -162,6 +179,7 @@ def medir_concorrente(caso, config, utilizadores, pedidos_por_utilizador):
 
 
 def alterar_indice(remover):
+    """Remove ou recria o índice (sensor, instante) diretamente em SQL, para medir o seu efeito."""
     from django.conf import settings
     with sqlite3.connect(settings.DATABASES['default']['NAME']) as ligacao:
         if remover:

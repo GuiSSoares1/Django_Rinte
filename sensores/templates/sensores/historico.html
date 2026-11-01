@@ -1,3 +1,6 @@
+{# Histórico de um sensor (UC3) e botão de exportação (UC4). Contexto enviado pela #}
+{# view historico (views.py): sensor, inicio, fim, resumo (minimo, maximo, media, #}
+{# total), grafico, leituras (as 50 mais recentes), max_linhas e query. #}
 {% extends 'base.html' %}
 
 {% block titulo %}{{ sensor.nome }}{% endblock %}
@@ -21,15 +24,18 @@
     <h1 class="h3 fw-bold mb-1">{{ sensor.nome }}</h1>
     <p class="texto-suave mb-0">
       <i class="bi bi-building me-1"></i>{{ sensor.instalacao.nome }} ·
+      {# get_tipo_display: texto da escolha ("CO₂") em vez do valor guardado ("co2") #}
       {{ sensor.get_tipo_display }} · limites de {{ sensor.limite_min|floatformat:0 }}
       a {{ sensor.limite_max|floatformat:0 }} {{ sensor.unidade }}
     </p>
   </div>
+  {# ?{{ query }} repete os parâmetros atuais: o CSV exporta o mesmo intervalo #}
   <a class="btn btn-outline-info"
      href="{% url 'exportar_csv' sensor.pk %}?{{ query }}">
     <i class="bi bi-download me-1"></i>Exportar CSV</a>
 </div>
 
+{# Formulário GET: os campos vão no endereço (?inicio=...&fim=...) e são lidos por _intervalo() #}
 <form method="get" class="cartao p-3 mb-4 row g-2 align-items-end mx-0">
   <div class="col-sm-auto">
     <label class="rotulo-pequeno mb-1" for="inicio">Início</label>
@@ -47,6 +53,7 @@
   </div>
 </form>
 
+{# Se não houver leituras no intervalo, salta para o {% else %} no fim #}
 {% if resumo.total %}
   <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3"><div class="cartao indicador p-3 d-flex justify-content-between">
@@ -74,6 +81,7 @@
         <i class="bi bi-square-fill me-1" style="color: rgba(34,197,94,.35)"></i>intervalo normal
       </span>
     </div>
+    {# O Chart.js desenha o gráfico neste canvas (ver o bloco scripts) #}
     <div style="height: 340px"><canvas id="grafico"></canvas></div>
   </div>
 
@@ -87,6 +95,7 @@
         <thead><tr><th class="ps-3 rotulo-pequeno">Hora</th>
                    <th class="text-end pe-3 rotulo-pequeno">Valor</th></tr></thead>
         <tbody>
+          {# Linhas fora dos limites ficam a vermelho (classe linha-alerta) #}
           {% for leitura in leituras %}
             <tr class="{% if leitura.valor < sensor.limite_min or leitura.valor > sensor.limite_max %}linha-alerta{% endif %}">
               <td class="ps-3">{{ leitura.instante|date:"d/m/Y H:i:s" }}</td>
@@ -101,15 +110,20 @@
   <div class="alert alert-info">Não existem leituras para o período escolhido.</div>
 {% endif %}
 
+{# json_script escreve o dicionário grafico num <script type="application/json" #}
+{# id="dados-grafico">, com escape seguro. É assim que os dados passam do Python #}
+{# para o JavaScript sem um pedido extra à API. #}
 {{ grafico|json_script:"dados-grafico" }}
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
+  // Corre no browser: lê os dados escritos pelo json_script e desenha o gráfico
   const dados = JSON.parse(document.getElementById('dados-grafico').textContent);
   const canvas = document.getElementById('grafico');
   if (canvas && dados.valores.length) {
+    // Os limites são desenhados como linhas horizontais (o mesmo valor em todos os pontos)
     const linha = (valor) => dados.valores.map(() => valor);
     const contexto = canvas.getContext('2d');
     const gradiente = contexto.createLinearGradient(0, 0, 0, 340);
@@ -122,6 +136,7 @@
       data: {
         labels: dados.etiquetas,
         datasets: [
+          // 1) leituras; 2) limite máximo, pintado até ao mínimo (fill: '+1') = faixa verde normal; 3) limite mínimo
           {label: 'Valor', data: dados.valores, borderColor: '#38bdf8',
            backgroundColor: gradiente, fill: 'origin', pointRadius: 0,
            borderWidth: 2, tension: 0.25, order: 0},

@@ -12,6 +12,7 @@ Caso de estudo do trabalho de RINTE (MEEC/ISEP) sobre o Django.
 | UC4 Exportar CSV | `/sensores/<id>/csv/` |
 | UC5 Gerir instalações e sensores | `/admin/` |
 | UC6 Submeter leituras (API) | `POST /api/leituras/` (cabeçalho `Authorization: Token <chave>`) |
+| Documentação da API (Scalar, só `admin`) | `/api/docs/` (esquema OpenAPI em `/api/schema/`) |
 
 ## Instalação (Windows)
 
@@ -65,18 +66,33 @@ python simulador.py --intervalo 5 --prob-alerta 0.05
 Cada instalação envia a cada 5 s as leituras dos seus 5 sensores; ~5 % dos
 valores ficam fora dos limites, para os sensores aparecerem "Em alerta".
 
+Para enviar uma única leitura, como faria um dispositivo:
+
+```
+python enviar_leitura.py <id do sensor> <valor>
+```
+
+Em alternativa, com sessão de `admin`, os pedidos podem ser feitos na página
+`/api/docs/` (botão *Test Request*).
+
 ## Testes
 
 ```
 python manage.py test sensores
 ```
 
-Testes T01–T10 (UC1–UC6 e segurança RT5).
+16 testes, agrupados de T01 a T10 (UC1–UC6 e segurança RT5).
 
 ## Ensaios de desempenho
 
 ```
-python manage.py gerar_leituras 1000000
-waitress-serve --threads=8 --listen=127.0.0.1:8000 config.wsgi:application
+python manage.py preparar_demo
 python ensaios.py
 ```
+
+O `ensaios.py` corre uma vez e termina: gera 10^4, 10^5 e 10^6 leituras,
+arranca o Waitress (8 threads, porta 8001, `DEBUG` desligado), mede cada caso
+de uso com 200 pedidos, compara o painel com e sem índice e faz o ensaio de
+carga. Os resultados, com o tempo de cada pedido, ficam em
+`resultados/ensaios_<data>.json`. No fim, a base de dados fica com 10^6
+leituras: antes de uma demonstração, correr `python manage.py gerar_leituras 10000`.

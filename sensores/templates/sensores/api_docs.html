@@ -1,0 +1,41 @@
+{% comment %}
+  Documentação interativa da API (Scalar), em /api/docs/, só para administradores.
+  Não herda do base.html: a página é toda desenhada pelo Scalar (JavaScript
+  carregado de uma CDN), que lê o documento OpenAPI em /api/schema/ e mostra
+  os campos, exemplos e respostas, com um botão para enviar pedidos de teste.
+  Contexto enviado pela view api_docs: token (chave do dispositivo de demonstração).
+{% endcomment %}
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API - Monitorização IoT</title>
+</head>
+<body>
+  {# O Scalar monta a página dentro desta div #}
+  <div id="app"></div>
+  {# Passa o token do Python para o JavaScript, como no gráfico do histórico #}
+  {{ token|json_script:"token-dispositivo" }}
+  <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.75.0/dist/browser/standalone.js"></script>
+  <script>
+    // Documentação gerada a partir do esquema OpenAPI do drf-spectacular.
+    // O token do dispositivo de demonstração vem pré-preenchido no botão "Send".
+    const token = JSON.parse(document.getElementById('token-dispositivo').textContent);
+    Scalar.createApiReference('#app', {
+      url: '{% url "api_schema" %}',
+      darkMode: true,
+      // Só a documentação e o cliente de pedidos: sem os serviços extra do Scalar
+      showDeveloperTools: 'never',
+      agent: { disabled: true },
+      mcp: { disabled: true },
+      hideModels: true,
+      telemetry: false,
+      authentication: {
+        preferredSecurityScheme: 'tokenAuth',
+        securitySchemes: token ? { tokenAuth: { value: 'Token ' + token } } : {},
+      },
+    });
+  </script>
+</body>
+</html>

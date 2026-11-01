@@ -1,11 +1,19 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""
+Utilitário de linha de comandos do Django.
+
+Todos os comandos do projeto passam por aqui, por exemplo:
+    python manage.py runserver        servidor de desenvolvimento
+    python manage.py migrate          cria/atualiza as tabelas da base de dados
+    python manage.py test sensores    corre os testes automáticos
+    python manage.py preparar_demo    comando nosso (sensores/management/commands/)
+"""
 import os
 import sys
 
 
 def main():
-    """Run administrative tasks."""
+    # Indica ao Django qual é o ficheiro de configuração
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
     try:
         from django.core.management import execute_from_command_line

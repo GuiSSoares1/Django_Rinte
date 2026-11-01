@@ -1,3 +1,7 @@
+{# Página de início de sessão (UC1). Não tem view nossa: é a LoginView do Django #}
+{# (config/urls.py), que procura este template em registration/login.html e lhe #}
+{# passa o formulário (form) e o endereço a abrir depois de entrar (next). #}
+{# O extends tem de ser a primeira etiqueta: antes dele só cabem comentários de uma linha. #}
 {% extends 'base.html' %}
 
 {% block titulo %}Iniciar sessão{% endblock %}
@@ -13,10 +17,12 @@
         <h1 class="h4 mb-1">Monitorização IoT</h1>
         <p class="texto-suave small mb-0">Inicie sessão para aceder ao painel</p>
       </div>
+      {# form.errors existe quando o utilizador ou a palavra-passe estão errados #}
       {% if form.errors %}
         <div class="alert alert-danger py-2 small">
           Nome de utilizador ou palavra-passe incorretos.</div>
       {% endif %}
+      {# Sem action: o POST vai para o próprio /login/. csrf_token: campo oculto anti-CSRF #}
       <form method="post">
         {% csrf_token %}
         <div class="mb-3">
@@ -29,6 +35,7 @@
           <input class="form-control form-control-lg" type="password" name="password"
                  id="id_password" required>
         </div>
+        {# next: página pedida antes do login (o login_required acrescenta ?next=...) #}
         <input type="hidden" name="next" value="{{ next }}">
         <button type="submit" class="btn btn-info w-100 fw-semibold">Entrar</button>
       </form>
